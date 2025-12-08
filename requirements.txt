@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pymongo
+selenium
+webdriver-manager
+pydantic
+python-multipart
+pydantic-settings  
