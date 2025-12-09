@@ -127,14 +127,14 @@ class PlaywrightGoldScrapingService:
     def _get_current_price(self) -> Optional[Tuple[str, str]]:
         """Attempts API, then falls back to Scraping (via async wrapper) if API fails."""
         
-        # 1. Primary Source: API (Synchronous)
-        price, source = self._fetch_api_price()
-        if price:
-            print(f"SUCCESS: Fetched price from {source}.")
-            return price, source
+        # # 1. Primary Source: API (Synchronous)
+        # price, source = self._fetch_api_price()
+        # if price:
+        #     print(f"SUCCESS: Fetched price from {source}.")
+        #     return price, source
         
         # 2. Failover Source: Scraping (Requires running async in the thread's loop)
-        print("API failed. Falling back to Playwright scraping...")
+        print("Start Playwright scraping...")
         try:
             # Use the loop found during run_scraper_loop start
             coro = self._fetch_scraping_price_async()
