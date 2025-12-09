@@ -50,6 +50,7 @@
 
 from fastapi import WebSocket
 from typing import List, Dict, Any
+from datetime import datetime
 
 class ConnectionManager:
     def __init__(self):
@@ -60,8 +61,12 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
+        print("New WebSocket client connected")
+        await websocket.send_json({"price": None, "source": None, "timestamp": datetime.now().isoformat()})
+        
         if self.last_broadcasted_data:
-            await websocket.send_json(self.last_broadcasted_data)  # Send last value immediately
+            await websocket.send_json(self.last_broadcasted_data)
+
 
     async def broadcast(self, data: dict):
         self.last_broadcasted_data = data
