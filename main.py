@@ -118,6 +118,7 @@ from starlette.middleware.cors import CORSMiddleware
 from config.settings import settings
 from datetime import datetime
 import asyncio
+from services.websocket_manager import manager
 
 app = FastAPI(title="RealTime Price Scraper API", version="1.0.0")
 
