@@ -128,7 +128,7 @@ origins = [
     "http://127.0.0.1:3000",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "https://live-price-tracker.netlify.app/"
+    "https://live-price-tracker.netlify.app",
 
 ]
 
@@ -139,6 +139,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 # WebSocket Manager
 from fastapi import WebSocket
