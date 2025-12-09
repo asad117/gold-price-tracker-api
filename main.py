@@ -3,7 +3,9 @@
 from fastapi import FastAPI
 from core.database import connect_to_mongo, close_mongo_connection, get_mongo_client
 from api.endpoints import websocket
-from services.scraping_service import GoldScrapingService
+# from services.scraping_service import GoldScrapingService
+from services.playwright_scraper_service import PlaywrightGoldScrapingService as GoldScrapingService
+
 from services.repositories.price_repo import PriceRepository
 import asyncio
 from contextlib import asynccontextmanager 
