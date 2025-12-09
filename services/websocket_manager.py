@@ -60,9 +60,8 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        # Send last data immediately if available
         if self.last_broadcasted_data:
-            await websocket.send_json(self.last_broadcasted_data)
+            await websocket.send_json(self.last_broadcasted_data)  # Send last value immediately
 
     async def broadcast(self, data: dict):
         self.last_broadcasted_data = data
@@ -70,8 +69,7 @@ class ConnectionManager:
         for conn in self.active_connections:
             try:
                 await conn.send_json(data)
-            except Exception as e:
-                print(f"Removing disconnected client: {e}")
+            except:
                 to_remove.append(conn)
         for conn in to_remove:
             self.disconnect(conn)

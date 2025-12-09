@@ -67,39 +67,28 @@ class PlaywrightGoldScrapingService:
 
     # --- Main async scraping loop ---
     async def run_scraper_loop_async(self, mongo_client: MongoClient):
-        print("Dual-Source Async Scraper started.")
-        try:
-            while True:
+        # Inside run_scraper_loop_async
+        while True:
+            try:
+                # Scrape
                 current_price, current_source = await self._fetch_scraping_price_async()
 
                 if not current_price:
-                    print("Warning: Failed to fetch price. Retrying...")
                     await asyncio.sleep(settings.SCRAPE_INTERVAL_SECONDS)
                     continue
 
-                print(f"DEBUG: Price Check: '{current_price}' | Source: '{current_source}'")
+                # Save to MongoDB immediately
+                await self.repo.save_price(mongo_client, current_price, current_source)
 
-                # --- Save to MongoDB ---
-                try:
-                    await self.repo.save_price(mongo_client, current_price, current_source)
-                    print(f"Saved price to MongoDB: {current_price}")
-                except Exception as e:
-                    print(f"Error saving to MongoDB: {e}")
+                # Broadcast immediately to all websocket clients
+                await ws_manager.broadcast({
+                    "price": current_price,
+                    "source": current_source,
+                    "timestamp": datetime.utcnow().isoformat(),
+                })
 
-                # --- Broadcast to WebSocket clients ---
-                try:
-                    data_to_push = {
-                        "price": current_price,
-                        "source": current_source,
-                        "timestamp": datetime.utcnow().isoformat(),
-                    }
-                    await ws_manager.broadcast(data_to_push)
-                except Exception as e:
-                    print(f"Error broadcasting WebSocket data: {e}")
-
+                # Wait interval
                 await asyncio.sleep(settings.SCRAPE_INTERVAL_SECONDS)
-
-        finally:
-            # Cleanup browser on exit
-            if self.browser:
-                await self._close_browser()
+            except Exception as e:
+                print(f"Critical error in scraper loop: {e}")
+                await asyncio.sleep(3)  # small delay to avoid busy loop on error

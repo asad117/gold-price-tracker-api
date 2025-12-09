@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     FAILOVER_CSS_SELECTOR: str = "div[data-field='BID']"
     
     TARGET_URL: str = "https://www.tradingview.com/symbols/GOLD/?exchange=TVC"
-    SCRAPE_INTERVAL_SECONDS: int = 3
+    SCRAPE_INTERVAL_SECONDS: int = 2
     PRICE_CSS_SELECTOR: str = "span[data-qa-id='symbol-last-value']"
     API_KEY_HEADER: str = "X-API-Key"
 
