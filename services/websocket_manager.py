@@ -15,11 +15,28 @@ class ConnectionManager:
         if self.last_broadcasted_data:
             await websocket.send_json(self.last_broadcasted_data)
 
-    async def broadcast(self, data: Dict[str, Any]):
-        # CRITICAL: Update the last data before broadcasting
-        self.last_broadcasted_data = data 
-        for connection in self.active_connections:
-            await connection.send_json(data)
+    # async def broadcast(self, data: Dict[str, Any]):
+    #     # CRITICAL: Update the last data before broadcasting
+    #     self.last_broadcasted_data = data 
+    #     for connection in self.active_connections:
+    #         await connection.send_json(data)
+
+
+
+
+    async def broadcast(self, data: dict):
+        self.last_broadcasted_data = data
+        to_remove = []
+        for conn in self.active_connections:
+            try:
+                await conn.send_json(data)
+            except Exception as e:
+                print(f"Removing disconnected client: {e}")
+                to_remove.append(conn)
+        for conn in to_remove:
+            self.disconnect(conn)
+
+
 
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
